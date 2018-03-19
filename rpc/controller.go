@@ -36,9 +36,14 @@ func dispatch() {
 	//	m2sTx(true)
 	//}
 
-	m2sTx(true)
+	//for !isEmpty() {
+	//	if len(input) < InputLimit {
+	//		break
+	//	}
+	//	m2sTx(true)
+	//}
 	for !isEmpty() {
-		s2sTx(true)
+		s2mTx(true)
 	}
 
 	// output tip message

@@ -27,9 +27,12 @@ func s2mTx(recursion bool) {
 		// avoid to create a coin with low amount than dust
 		maxSplit := int(amount * math.Pow10(8)) / dust
 
+		if maxSplit == 0 {
+			continue
+		}
+
 		var iteration int64 = OutputLimit
 		if maxSplit < OutputLimit {
-			s2m.TxOut = s2m.TxOut[:maxSplit]
 			iteration = int64(maxSplit)
 		}
 
