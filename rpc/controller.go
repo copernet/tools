@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func dispatch() {
 	spendableCount := len(input)
 	listunspentLimit := conf.DefaultInt("exec::listunspent_limit", DefaultListunspentLimit)
@@ -20,5 +22,13 @@ func dispatch() {
 
 	for {
 		s2sTx(false)
+
+		// stop if no input data
+		if len(input) == 0 {
+			break
+		}
 	}
+
+	// output tip message
+	fmt.Println("Create Transactions Complate!\n")
 }
