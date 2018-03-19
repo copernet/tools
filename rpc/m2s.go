@@ -8,11 +8,10 @@ import (
 func m2sTx(recursion bool) {
 	log.Info("EXEC m2sTx(%t)", recursion)
 
-	refs := make([]ref, 0, InputLimit)
+	refs := make([]ref, InputLimit)
+	counter := 0
+	sum := 0.0
 	for reference, amount := range input {
-		counter := 0
-		sum := 0.0
-
 		txin := wire.TxIn{
 			PreviousOutPoint: wire.OutPoint{
 				Hash:  reference.hash,
@@ -20,15 +19,15 @@ func m2sTx(recursion bool) {
 			},
 			Sequence: 0xffffff,
 		}
-		m2s.TxIn = append(m2s.TxIn, &txin)
+		m2s.TxIn[counter] = &txin
+		refs[counter] = reference
 		counter++
 		sum += amount
 
-		refs = append(refs, reference)
 		if counter < InputLimit {
 			continue
 		}
-
+		counter = 0
 
 		pkScript := getRandScriptPubKey()
 		if pkScript == nil {
@@ -41,9 +40,11 @@ func m2sTx(recursion bool) {
 			PkScript: pkScript,
 		}
 
-		s2s.TxOut[0] = &out
+		m2s.TxOut[0] = &out
 
-		signAndSendTx(s2m, refs, 1, recursion)
+		// reset sum
+		sum = 0.0
+		signAndSendTx(m2s, refs, 1, recursion)
 	}
 
 	s2m.LockTime = 0

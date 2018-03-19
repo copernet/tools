@@ -108,6 +108,18 @@ func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 		log.Error(err.Error())
 	}
 
+	// btc transaction signature algorithm is different from bch, so
+	// following code is invalid.
+	//rawPriv, _ := hex.DecodeString("**************")
+	//prikey,_ := btcec.PrivKeyFromBytes(btcec.S256(), rawPriv)
+	//for idx, _ := range msg.TxIn{
+	//	b, err := txscript.SignatureScript(msg,idx,msg.TxOut[0].PkScript,65503,prikey,true)
+	//	if err != nil {
+	//		panic(err)
+	//	}
+	//	msg.TxIn[idx].SignatureScript = b
+	//}
+
 	// rpc request send a signed transaction, it will return a error if there are any
 	// error
 	txhash, err := client.SendRawTransaction(signedTx, true)
