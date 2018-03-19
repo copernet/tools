@@ -14,8 +14,8 @@ import (
 const (
 	DefaultDust = 1000
 
-	InputLimit = 50
-	OutputLimit = 50
+	InputLimit  = 10
+	OutputLimit = 10
 
 	DefaultFee = 0
 
@@ -32,7 +32,7 @@ var (
 	output = make(map[string][]byte)
 	// lessCoin represents transaction with less spendable amount
 	lessCoin = make(coin)
-	fee int64
+	fee      int64
 
 	client *rpcclient.Client
 	// successful transaction
@@ -51,7 +51,7 @@ type ref struct {
 type coin map[ref]float64
 
 func init() {
-	fmt.Println("app init start...")
+	log.Info("app init start...")
 	// configuration setting
 	var err error
 	conf, err = config.NewConfig("ini", "conf/app.conf")
@@ -82,13 +82,12 @@ func init() {
 
 	s2m = wire.NewMsgTx(1)
 	s2m.TxIn = make([]*wire.TxIn, 1)
-	s2m.TxOut = make([]*wire.TxOut, 0, OutputLimit)
 
 	m2s = wire.NewMsgTx(1)
 	m2s.TxIn = make([]*wire.TxIn, InputLimit)
 	m2s.TxOut = make([]*wire.TxOut, 1)
 
-	fmt.Println("app init complete...")
+	log.Info("app init complete...")
 }
 
 func main() {
@@ -103,20 +102,20 @@ func main() {
 func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 	// rpc requests signing a raw transaction and gets returned signed transaction,
 	// or get null and a err reason
-	signed, _, err := client.SignRawTransaction(msg)
+	signedTx, _, err := client.SignRawTransaction(msg)
 	if err != nil {
 		log.Error(err.Error())
 	}
 
 	// rpc request send a signed transaction, it will return a error if there are any
 	// error
-	txhash, err := client.SendRawTransaction(signed, true)
+	txhash, err := client.SendRawTransaction(signedTx, true)
+
+	// remove transactions that have been consumed whether success or not
+	removeInputRecursion(refs)
 	if err != nil {
-		removeInputRecursion(refs)
 		log.Error(err.Error())
 	} else {
-		removeInputRecursion(refs)
-
 		// recursion tx
 		if recursion {
 			reference := ref{}
@@ -140,7 +139,7 @@ func getRandScriptPubKey() []byte {
 }
 
 func removeInputRecursion(refs []ref) {
-	for _, item := range refs{
+	for _, item := range refs {
 		delete(input, item)
 	}
 }

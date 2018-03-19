@@ -1,18 +1,29 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func dispatch() {
 	spendableCount := len(input)
-	listunspentLimit := conf.DefaultInt("exec::listunspent_limit", DefaultListunspentLimit)
+	if spendableCount == 0 {
+		log.Error("There is no spendable transaction.")
+	}
 
-	iteration := spendableCount - listunspentLimit
-	if iteration < 0 {
+	listunspentLimit := conf.DefaultInt("exec::listunspent_limit", DefaultListunspentLimit)
+	iteration :=  listunspentLimit - spendableCount
+	if iteration > 0 {
+		log.Info("less input, create more spendable transactions...")
 		count := conf.DefaultInt("tx::output_limit", OutputLimit)
 		iteration = iteration / count * 2
 
 		for i := 0; i < iteration; i++ {
 			s2mTx(true)
+
+			// has too much spendable transactions
+			if len(input) > listunspentLimit*2 {
+				break
+			}
 		}
 	}
 

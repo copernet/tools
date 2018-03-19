@@ -7,6 +7,7 @@ import (
 
 func s2mTx(recursion bool) {
 	log.Info("EXEC s2mTx(%t)", recursion)
+	dust := conf.DefaultInt("tx::dust", DefaultDust)
 
 	for reference, amount := range input {
 		txin := wire.TxIn{
@@ -14,7 +15,7 @@ func s2mTx(recursion bool) {
 				Hash:  reference.hash,
 				Index: reference.index,
 			},
-			Sequence: 0xffffff,
+			Sequence: 0xffffff,		// default value
 		}
 		s2m.TxIn[0] = &txin
 
@@ -23,26 +24,26 @@ func s2mTx(recursion bool) {
 			panic("no account in output...")
 		}
 
-		dust := conf.DefaultInt("tx::dust", DefaultDust)
+		// avoid to create a coin with low amount than dust
 		maxSplit := int(amount * math.Pow10(8)) / dust
 
 		var iteration int64 = OutputLimit
 		if maxSplit < OutputLimit {
+			s2m.TxOut = s2m.TxOut[:maxSplit]
 			iteration = int64(maxSplit)
 		}
 
-		splitValue := int64(amount * math.Pow10(8)) / iteration - iteration * fee
-		for i := 0; i < OutputLimit; i++ {
+		splitValue := int64(amount * math.Pow10(8)) / iteration - fee
+
+		s2m.TxOut = make([]*wire.TxOut, iteration)
+		for  i := 0; i < int(iteration); i++ {
 			out := wire.TxOut{
 				Value:    splitValue, // transaction fee
 				PkScript: pkScript,
 			}
-
-			s2m.TxOut = append(s2m.TxOut, &out)
+			s2m.TxOut[i] = &out
 		}
 
 		signAndSendTx(s2m, []ref{reference}, int(iteration), recursion)
 	}
-
-	s2m.LockTime = 0
 }

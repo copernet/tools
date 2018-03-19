@@ -10,6 +10,16 @@ import (
 // inputs() function will stop this program via panic exception
 // because origin spendable tx will be empty if any error occur.
 func inputs(client *rpcclient.Client) {
+	dust, err := conf.Int("tx::dust")
+	if err != nil {
+		dust = DefaultDust
+	}
+
+	limitCoin, err := conf.Int("tx::limit_coin")
+	if err != nil {
+		dust = DefaultDust
+	}
+
 	// rpc requests to get unspent coin list
 	lu, err := client.ListUnspent()
 	if err != nil {
@@ -36,16 +46,8 @@ func inputs(client *rpcclient.Client) {
 		}
 
 		// convert Satoshi to BCH
-		dust, err := conf.Int("tx::dust")
-		if err != nil {
-			dust = DefaultDust
-		}
 		dustConvert := float64(dust) * math.Pow10(-8.0)
 
-		limitCoin, err := conf.Int("tx::limit_coin")
-		if err != nil {
-			dust = DefaultDust
-		}
 		limitCoinConvert := float64(limitCoin) * math.Pow10(-8.0)
 		if item.Amount > dustConvert {
 
