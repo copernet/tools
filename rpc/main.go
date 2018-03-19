@@ -19,7 +19,8 @@ const (
 
 	DefaultFee = 0
 
-	DefaultListunspentLimit = 10000
+	DefaultListUnspentLimit = 10000
+	AbundantTransactions = 60000
 )
 
 // global variables
@@ -51,7 +52,7 @@ type ref struct {
 type coin map[ref]float64
 
 func init() {
-	log.Info("app init start...")
+	fmt.Println("app init start...")
 	// configuration setting
 	var err error
 	conf, err = config.NewConfig("ini", "conf/app.conf")
@@ -87,7 +88,7 @@ func init() {
 	m2s.TxIn = make([]*wire.TxIn, InputLimit)
 	m2s.TxOut = make([]*wire.TxOut, 1)
 
-	log.Info("app init complete...")
+	fmt.Println("app init complete...")
 }
 
 func main() {

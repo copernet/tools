@@ -1,17 +1,22 @@
 package main
 
-import (
-	"fmt"
-)
-
 func dispatch() {
 	spendableCount := len(input)
 	if spendableCount == 0 {
 		log.Error("There is no spendable transaction.")
 	}
 
-	listunspentLimit := conf.DefaultInt("exec::listunspent_limit", DefaultListunspentLimit)
-	iteration :=  listunspentLimit - spendableCount
+	// create single to single transaction if there are abundant spendable transaction
+	// in wallet
+	abundantTransactions := conf.DefaultInt("abundant_transactions", AbundantTransactions)
+	if spendableCount >= abundantTransactions {
+		for !isEmpty() {
+			s2sTx(true)
+		}
+	}
+
+	listUnspentLimit := conf.DefaultInt("exec::list_unspent_limit", DefaultListUnspentLimit)
+	iteration :=  listUnspentLimit - spendableCount
 	if iteration > 0 {
 		log.Info("less input, create more spendable transactions...")
 		count := conf.DefaultInt("tx::output_limit", OutputLimit)
@@ -21,7 +26,7 @@ func dispatch() {
 			s2mTx(true)
 
 			// has too much spendable transactions
-			if len(input) > listunspentLimit*2 {
+			if len(input) > listUnspentLimit*2 {
 				break
 			}
 		}
@@ -31,15 +36,15 @@ func dispatch() {
 		m2sTx(true)
 	}
 
-	for {
-		s2sTx(false)
-
-		// stop if no input data
-		if len(input) == 0 {
-			break
-		}
+	for !isEmpty() {
+		s2sTx(true)
 	}
 
 	// output tip message
-	fmt.Println("Create Transactions Complate!\n")
+	log.Info("Create Transactions Complete!\n")
+}
+
+func isEmpty() bool {
+	// stop if no input data
+	return len(input) == 0
 }

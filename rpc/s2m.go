@@ -34,6 +34,9 @@ func s2mTx(recursion bool) {
 		}
 
 		splitValue := int64(amount * math.Pow10(8)) / iteration - fee
+		if splitValue < 0 {
+			continue
+		}
 
 		s2m.TxOut = make([]*wire.TxOut, iteration)
 		for  i := 0; i < int(iteration); i++ {
