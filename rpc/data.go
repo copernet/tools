@@ -10,6 +10,8 @@ import (
 // inputs() function will stop this program via panic exception
 // because origin spendable tx will be empty if any error occur.
 func inputs(client *rpcclient.Client) {
+	log.Info("starting acquire data...")
+
 	dust, err := conf.Int("tx::dust")
 	if err != nil {
 		dust = DefaultDust

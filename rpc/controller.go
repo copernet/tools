@@ -1,49 +1,33 @@
 package main
 
+type dispatchType int
+
+const (
+	s2sType dispatchType = 1 << iota
+	s2mType
+	m2sType
+	n2mType		// not to realise at current time
+)
+
 func dispatch() {
 	spendableCount := len(input)
 	if spendableCount == 0 {
 		log.Error("There is no spendable transaction.")
 	}
 
-	// create single to single transaction if there are abundant spendable transaction
-	// in wallet
-	//abundantTransactions := conf.DefaultInt("abundant_transactions", AbundantTransactions)
-	//if spendableCount >= abundantTransactions {
-	//	for !isEmpty() {
-	//		s2sTx(true)
-	//	}
-	//}
+	for getDispatchType(m2sType) && !isEmpty() {
+		if len(input) < InputLimit {
+			break
+		}
+		m2sTx(true)
+	}
 
-	//listUnspentLimit := conf.DefaultInt("exec::list_unspent_limit", DefaultListUnspentLimit)
-	//iteration :=  listUnspentLimit - spendableCount
-	//if iteration > 0 {
-	//	log.Info("less input, create more spendable transactions...")
-	//	count := conf.DefaultInt("tx::output_limit", OutputLimit)
-	//	iteration = iteration / count * 2
-	//
-	//	for i := 0; i < iteration && !isEmpty(); i++ {
-	//		s2mTx(true)
-	//
-	//		// has too much spendable transactions
-	//		if len(input) > listUnspentLimit*2 {
-	//			break
-	//		}
-	//	}
-	//}
-
-	//if len(lessCoin) > 5000 {
-	//	m2sTx(true)
-	//}
-
-	//for !isEmpty() {
-	//	if len(input) < InputLimit {
-	//		break
-	//	}
-	//	m2sTx(true)
-	//}
-	for !isEmpty() {
+	for getDispatchType(s2mType) && !isEmpty() {
 		s2mTx(true)
+	}
+
+	for getDispatchType(s2sType) && !isEmpty() {
+		s2sTx(true)
 	}
 
 	// output tip message
@@ -53,4 +37,9 @@ func dispatch() {
 func isEmpty() bool {
 	// stop if no input data
 	return len(input) == 0
+}
+
+func getDispatchType(t dispatchType) bool {
+	dispatch := must(conf.Int("dispatch::type"))
+	return dispatchType(dispatch.(int))&t == t
 }

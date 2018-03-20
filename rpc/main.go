@@ -88,7 +88,7 @@ func init() {
 	m2s.TxIn = make([]*wire.TxIn, InputLimit)
 	m2s.TxOut = make([]*wire.TxOut, 1)
 
-	fmt.Println("app init complete...")
+	fmt.Println("app init complete!")
 }
 
 func main() {
