@@ -15,21 +15,28 @@ func dispatch() {
 		log.Error("There is no spendable transaction.")
 	}
 
+	// whether to create transaction recursively
 	recursionConf := conf.DefaultBool("recursion", DefaultRecursion)
 
-	for getDispatchType(m2sType) && !isEmpty() {
-		if len(input) < InputLimit {
-			break
+	if getDispatchType(m2sType) {
+		for  !isEmpty() {
+			if len(input) < InputLimit {
+				break
+			}
+			m2sTx(recursionConf)
 		}
-		m2sTx(recursionConf)
 	}
 
-	for getDispatchType(s2mType) && !isEmpty() {
-		s2mTx(recursionConf)
+	if getDispatchType(s2mType) {
+		for !isEmpty() {
+			s2mTx(recursionConf)
+		}
 	}
 
-	for getDispatchType(s2sType) && !isEmpty() {
-		s2sTx(recursionConf)
+	if getDispatchType(s2sType) {
+		for !isEmpty() {
+			s2sTx(recursionConf)
+		}
 	}
 
 	// output tip message
