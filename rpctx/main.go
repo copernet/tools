@@ -32,8 +32,6 @@ var (
 	// store available input and output
 	input  = make(coin)
 	output = make(map[string][]byte)
-	// lessCoin represents transaction with less spendable amount
-	lessCoin = make(coin)
 	fee      int64
 
 	client *rpcclient.Client

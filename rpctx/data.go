@@ -28,6 +28,7 @@ func inputs(client *rpcclient.Client) {
 		panic(err)
 	}
 
+	var lessCoin int
 	for _, item := range lu {
 		if item.Vout >= 255 {
 			break
@@ -61,8 +62,9 @@ func inputs(client *rpcclient.Client) {
 			}
 			output[item.Address] = scriptPubKey
 		} else if item.Amount > limitCoinConvert{
-			lessCoin[r] = item.Amount
+			lessCoin++
+			input[r] = item.Amount
 		}
 	}
-	log.Info("input: %d, output: %d, lessCoin: %d", len(input), len(output), len(lessCoin))
+	log.Info("input: %d, output: %d, lessCoin: %d", len(input), len(output), lessCoin)
 }
