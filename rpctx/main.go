@@ -21,6 +21,7 @@ const (
 
 	DefaultListUnspentLimit = 10000
 	AbundantTransactions = 60000
+	LessCoinLimit = 5000
 	DefaultRecursion = true
 )
 
@@ -107,6 +108,7 @@ func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 		log.Error(err.Error())
 	}
 
+	// todo sign tx in app no to bother client rpc(optimize)
 	// btc transaction signature algorithm is different from bch, so
 	// following code is invalid.
 	//rawPriv, _ := hex.DecodeString("**************")

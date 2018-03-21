@@ -49,6 +49,7 @@ func s2mTx(recursion bool) {
 			}
 			s2m.TxOut[i] = &out
 		}
+		//! no assignment for tx.LockTime(default 0)
 
 		signAndSendTx(s2m, []ref{reference}, int(iteration), recursion)
 	}

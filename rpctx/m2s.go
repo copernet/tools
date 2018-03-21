@@ -11,7 +11,13 @@ func m2sTx(recursion bool) {
 	refs := make([]ref, InputLimit)
 	counter := 0
 	sum := 0.0
+	lessCoinValue := conf.DefaultInt("less_coin_limit", LessCoinLimit)
 	for reference, amount := range input {
+		// aggregate many less coins in one other than abundant coin item
+		if amount * math.Pow10(8) > float64(lessCoinValue) {
+			continue
+		}
+
 		txin := wire.TxIn{
 			PreviousOutPoint: wire.OutPoint{
 				Hash:  reference.hash,
@@ -39,8 +45,8 @@ func m2sTx(recursion bool) {
 			Value:    give, // transaction fee
 			PkScript: pkScript,
 		}
-
 		m2s.TxOut[0] = &out
+		//! no assignment for tx.LockTime(default 0)
 
 		// reset sum
 		sum = 0.0
