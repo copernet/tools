@@ -1,5 +1,0 @@
-package: rpctest
-import:
-- package: github.com/btcsuite/btcd
-- package: github.com/astaxie/beego
-  version: ^1.9.2
