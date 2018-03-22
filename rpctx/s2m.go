@@ -10,6 +10,12 @@ func s2mTx(recursion bool) {
 	dust := conf.DefaultInt("tx::dust", DefaultDust)
 
 	for reference, amount := range input {
+		// avoid to create a coin with low amount than dust
+		maxSplit := int(amount * math.Pow10(8)) / dust
+		if maxSplit == 0 {
+			continue
+		}
+
 		txin := wire.TxIn{
 			PreviousOutPoint: wire.OutPoint{
 				Hash:  reference.hash,
@@ -22,13 +28,6 @@ func s2mTx(recursion bool) {
 		pkScript := getRandScriptPubKey()
 		if pkScript == nil {
 			panic("no account in output...")
-		}
-
-		// avoid to create a coin with low amount than dust
-		maxSplit := int(amount * math.Pow10(8)) / dust
-
-		if maxSplit == 0 {
-			continue
 		}
 
 		var iteration int64 = OutputLimit

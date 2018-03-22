@@ -12,10 +12,16 @@ func m2sTx(recursion bool) {
 	counter := 0
 	sum := 0.0
 	lessCoinValue := conf.DefaultInt("less_coin_limit", LessCoinLimit)
+	inputLimit := conf.DefaultInt("input_limit",InputLimit)
 	for reference, amount := range input {
 		// aggregate many less coins in one other than abundant coin item
 		if amount * math.Pow10(8) > float64(lessCoinValue) {
 			continue
+		}
+
+		// not enough input items
+		if len(input) < inputLimit {
+			break
 		}
 
 		txin := wire.TxIn{
@@ -30,17 +36,19 @@ func m2sTx(recursion bool) {
 		counter++
 		sum += amount
 
-		if counter < InputLimit {
+		if counter < inputLimit {
 			continue
 		}
 		counter = 0
 
+		give := int64(sum * math.Pow10(8)) - InputLimit * fee
+		if give <0 {
+			continue
+		}
 		pkScript := getRandScriptPubKey()
 		if pkScript == nil {
 			panic("no account in output...")
 		}
-
-		give := int64(sum * math.Pow10(8)) - InputLimit * fee
 		out := wire.TxOut{
 			Value:    give, // transaction fee
 			PkScript: pkScript,

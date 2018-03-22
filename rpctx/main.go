@@ -14,8 +14,8 @@ import (
 const (
 	DefaultDust = 1000
 
-	InputLimit  = 10
-	OutputLimit = 10
+	InputLimit  = 50
+	OutputLimit = 50
 
 	DefaultFee = 0
 
