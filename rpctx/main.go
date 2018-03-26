@@ -63,16 +63,13 @@ func init() {
 	log = logs.NewLogger()
 	// log setting
 	log.SetLogger("console")
-	//log.SetLogger(logs.AdapterFile, `{"filename":"log/btcrpc.log"}`)
-	//if must(conf.Bool("log::async")).(bool) {
-	//	log.Async(1e3)
-	//}
+	// log.SetLogger(logs.AdapterFile, `{"filename":"log/btcrpc.log"}`)
+	// if must(conf.Bool("log::async")).(bool) {
+	// 	log.Async(1e3)
+	// }
 
 	// get transaction fee from configuration
-	fee, err = conf.Int64("tx::fee")
-	if err != nil {
-		fee = DefaultFee
-	}
+	fee = conf.DefaultInt64("tx::fee", DefaultFee)
 
 	client = Client()
 
@@ -94,7 +91,7 @@ func init() {
 func main() {
 	defer client.Shutdown()
 
-	//rangeAccount(client)
+	// rangeAccount(client)
 	inputs(client)
 
 	dispatch()
@@ -111,15 +108,15 @@ func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 	// todo sign tx in app no to bother client rpc(optimize)
 	// btc transaction signature algorithm is different from bch, so
 	// following code is invalid.
-	//rawPriv, _ := hex.DecodeString("**************")
-	//prikey,_ := btcec.PrivKeyFromBytes(btcec.S256(), rawPriv)
-	//for idx, _ := range msg.TxIn{
+	// rawPriv, _ := hex.DecodeString("**************")
+	// prikey,_ := btcec.PrivKeyFromBytes(btcec.S256(), rawPriv)
+	// for idx, _ := range msg.TxIn{
 	//	b, err := txscript.SignatureScript(msg,idx,msg.TxOut[0].PkScript,65503,prikey,true)
 	//	if err != nil {
 	//		panic(err)
 	//	}
 	//	msg.TxIn[idx].SignatureScript = b
-	//}
+	// }
 
 	// rpc request send a signed transaction, it will return a error if there are any
 	// error
