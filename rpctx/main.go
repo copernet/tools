@@ -9,6 +9,7 @@ import (
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"fmt"
+	"time"
 )
 
 const (
@@ -91,10 +92,11 @@ func init() {
 func main() {
 	defer client.Shutdown()
 
-	// rangeAccount(client)
-	inputs(client)
+	for {
+		dispatch()
 
-	dispatch()
+		time.Sleep(10 * time.Minute)
+	}
 }
 
 func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {

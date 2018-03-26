@@ -10,6 +10,9 @@ const (
 )
 
 func dispatch() {
+	// rangeAccount(client)
+	inputs(client)
+
 	spendableCount := len(input)
 	if spendableCount == 0 {
 		log.Error("There is no spendable transaction.")
