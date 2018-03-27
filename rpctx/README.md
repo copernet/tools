@@ -29,7 +29,7 @@ static const Amount DUST_RELAY_TX_FEE(0);
 
 ### Result:
 
-Access to [http://114.215.41.16:3002/](http://114.215.41.16:3002/) relaxly!
+Access to [http://114.215.30.211:3002/](http://114.215.30.211:3002/) relaxly!
 
 Blocks Height List(meeting expected result):
 
