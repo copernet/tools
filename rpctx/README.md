@@ -37,7 +37,7 @@ Blocks Height List(meeting expected result):
 
 ### Todo:
 
-- Create n2m transaction randomly
-- Support dispatch functions via specified order in app.conf
-- Fix unreachable items in data randomly after adding item
+- [x] Create n2m transaction randomly
+- [ ] Support dispatch functions via specified order in app.conf
+- [ ] Fix unreachable items in data randomly after adding item
 
