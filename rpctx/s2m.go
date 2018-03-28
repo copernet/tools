@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/btcsuite/btcd/wire"
 	"math"
+
+	"github.com/btcsuite/btcd/wire"
 )
 
 func s2mTx(recursion bool) {
@@ -11,7 +12,10 @@ func s2mTx(recursion bool) {
 
 	for reference, amount := range input {
 		// avoid to create a coin with low amount than dust
-		maxSplit := int(amount * math.Pow10(8)) / dust
+		var maxSplit int
+		if dust != 0 {
+			maxSplit = int(amount*math.Pow10(8)) / dust
+		}
 		if maxSplit == 0 {
 			continue
 		}
@@ -21,7 +25,7 @@ func s2mTx(recursion bool) {
 				Hash:  reference.hash,
 				Index: reference.index,
 			},
-			Sequence: 0xffffff,		// default value
+			Sequence: 0xffffff, // default value
 		}
 		s2m.TxIn[0] = &txin
 
@@ -30,25 +34,25 @@ func s2mTx(recursion bool) {
 			panic("no account in output...")
 		}
 
-		var iteration int64 = OutputLimit
-		if maxSplit < OutputLimit {
-			iteration = int64(maxSplit)
+		iteration := conf.DefaultInt("output_limit", OutputLimit)
+		if maxSplit < iteration {
+			iteration = maxSplit
 		}
 
-		splitValue := int64(amount * math.Pow10(8)) / iteration - fee
+		splitValue := int(amount*math.Pow10(8))/iteration - fee
 		if splitValue < 0 {
 			continue
 		}
 
 		s2m.TxOut = make([]*wire.TxOut, iteration)
-		for  i := 0; i < int(iteration); i++ {
+		for i := 0; i < int(iteration); i++ {
 			out := wire.TxOut{
-				Value:    splitValue, // transaction fee
+				Value:    int64(splitValue), // transaction fee
 				PkScript: pkScript,
 			}
 			s2m.TxOut[i] = &out
 		}
-		//! no assignment for tx.LockTime(default 0)
+		//  no assignment for tx.LockTime(default 0)
 
 		signAndSendTx(s2m, []ref{reference}, int(iteration), recursion)
 	}

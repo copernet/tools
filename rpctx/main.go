@@ -1,15 +1,16 @@
 package main
 
 import (
-	"github.com/astaxie/beego/config"
-	"github.com/astaxie/beego/logs"
-	"github.com/btcsuite/btcd/rpcclient"
-	"github.com/btcsuite/btcutil/base58"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"fmt"
 	"time"
+
+	"github.com/astaxie/beego/config"
+	"github.com/astaxie/beego/logs"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
+	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcd/txscript"
+	"github.com/btcsuite/btcd/wire"
+	"github.com/btcsuite/btcutil/base58"
 )
 
 const (
@@ -21,9 +22,9 @@ const (
 	DefaultFee = 0
 
 	DefaultListUnspentLimit = 10000
-	AbundantTransactions = 60000
-	LessCoinLimit = 5000
-	DefaultRecursion = true
+	AbundantTransactions    = 60000
+	LessCoinLimit           = 5000
+	DefaultRecursion        = true
 )
 
 // global variables
@@ -34,7 +35,7 @@ var (
 	// store available input and output
 	input  = make(coin)
 	output = make(map[string][]byte)
-	fee      int64
+	fee    int
 
 	client *rpcclient.Client
 	// successful transaction
@@ -43,6 +44,7 @@ var (
 	s2s *wire.MsgTx
 	s2m *wire.MsgTx
 	m2s *wire.MsgTx
+	n2m *wire.MsgTx
 )
 
 type ref struct {
@@ -70,7 +72,7 @@ func init() {
 	// }
 
 	// get transaction fee from configuration
-	fee = conf.DefaultInt64("tx::fee", DefaultFee)
+	fee = conf.DefaultInt("tx::fee", DefaultFee)
 
 	client = Client()
 
@@ -83,8 +85,12 @@ func init() {
 	s2m.TxIn = make([]*wire.TxIn, 1)
 
 	m2s = wire.NewMsgTx(1)
-	m2s.TxIn = make([]*wire.TxIn, InputLimit)
+	m2s.TxIn = make([]*wire.TxIn, InputLimit) // todo modified according to config file
 	m2s.TxOut = make([]*wire.TxOut, 1)
+
+	n2m = wire.NewMsgTx(1)
+	n2m.TxIn = make([]*wire.TxIn, 1)
+	n2m.TxOut = make([]*wire.TxOut, 1)
 
 	fmt.Println("app init complete!")
 }

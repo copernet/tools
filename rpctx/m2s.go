@@ -1,15 +1,20 @@
 package main
 
 import (
-	"github.com/btcsuite/btcd/wire"
 	"math"
+	"math/rand"
+
+	"github.com/btcsuite/btcd/wire"
 )
 
 func m2sTx(recursion bool) {
 	log.Info("EXEC m2sTx(%t)", recursion)
 
 	inputLimit := conf.DefaultInt("input_limit", InputLimit)
-	refs := make([]ref, inputLimit)
+
+	// plus 1 to insure the result never be zero
+	realInputs := rand.Intn(inputLimit) + 1
+	refs := make([]ref, realInputs)
 	counter := 0
 	sum := 0.0
 	lessCoinValue := conf.DefaultInt("less_coin_limit", LessCoinLimit)
@@ -20,7 +25,7 @@ func m2sTx(recursion bool) {
 		}
 
 		// not enough input items
-		if len(input) < inputLimit {
+		if len(input) < realInputs {
 			break
 		}
 
@@ -36,12 +41,12 @@ func m2sTx(recursion bool) {
 		counter++
 		sum += amount
 
-		if counter < inputLimit {
+		if counter < realInputs {
 			continue
 		}
 		counter = 0
 
-		give := int64(sum*math.Pow10(8)) - int64(inputLimit)*fee
+		give := int(sum*math.Pow10(8)) - realInputs*fee
 		if give < 0 {
 			continue
 		}
@@ -50,7 +55,7 @@ func m2sTx(recursion bool) {
 			panic("no account in output...")
 		}
 		out := wire.TxOut{
-			Value:    give, // transaction fee
+			Value:    int64(give), // transaction fee
 			PkScript: pkScript,
 		}
 		m2s.TxOut[0] = &out
