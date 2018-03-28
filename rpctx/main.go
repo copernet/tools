@@ -25,6 +25,8 @@ const (
 	AbundantTransactions    = 60000
 	LessCoinLimit           = 5000
 	DefaultRecursion        = true
+
+	DefaultInterval = 600
 )
 
 // global variables
@@ -40,6 +42,9 @@ var (
 	client *rpcclient.Client
 	// successful transaction
 	count = 0
+
+	// create transactions interval
+	interval = 0
 
 	s2s *wire.MsgTx
 	s2m *wire.MsgTx
@@ -73,6 +78,7 @@ func init() {
 
 	// get transaction fee from configuration
 	fee = conf.DefaultInt("tx::fee", DefaultFee)
+	interval = conf.DefaultInt("interval", DefaultInterval)
 
 	client = Client()
 
@@ -101,7 +107,7 @@ func main() {
 	for {
 		dispatch()
 
-		time.Sleep(10 * time.Minute)
+		time.Sleep(time.Duration(interval) * time.Second)
 	}
 }
 
