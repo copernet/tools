@@ -10,14 +10,14 @@ import (
 func m2sTx(recursion bool) {
 	log.Info("EXEC m2sTx(%t)", recursion)
 
-	inputLimit := conf.DefaultInt("input_limit", InputLimit)
+	inputLimit := conf.DefaultInt("tx::input_limit", InputLimit)
 
 	// plus 1 to insure the result never be zero
 	realInputs := rand.Intn(inputLimit) + 1
 	refs := make([]ref, realInputs)
 	counter := 0
 	sum := 0.0
-	lessCoinValue := conf.DefaultInt("less_coin_limit", LessCoinLimit)
+	lessCoinValue := conf.DefaultInt("exec::less_coin_limit", LessCoinLimit)
 	for reference, amount := range input {
 		// aggregate many less coins in one other than abundant coin item
 		if amount*math.Pow10(8) < float64(lessCoinValue) {

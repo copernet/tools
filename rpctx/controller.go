@@ -6,7 +6,7 @@ const (
 	s2sType dispatchType = 1 << iota
 	s2mType
 	m2sType
-	n2mType // not to realise at current time
+	n2mType
 )
 
 func dispatch() {
@@ -21,20 +21,17 @@ func dispatch() {
 	// whether to create transaction recursively
 	recursionConf := conf.DefaultBool("recursion", DefaultRecursion)
 
-	if getDispatchType(m2sType) && !isEmpty() {
-		m2sTx(recursionConf)
-	}
-
-	if getDispatchType(s2mType) && !isEmpty() {
-		s2mTx(recursionConf)
-	}
-
-	if getDispatchType(s2sType) && !isEmpty() {
-		s2sTx(recursionConf)
-	}
-
-	if getDispatchType(n2mType) && !isEmpty() {
-		n2mTx(recursionConf)
+	if !isEmpty() {
+		switch t := getDispatchType(m2sType); t {
+		case m2sType:
+			m2sTx(recursionConf)
+		case s2mType:
+			s2mTx(recursionConf)
+		case s2sType:
+			s2sTx(recursionConf)
+		case n2mType:
+			n2mTx(recursionConf)
+		}
 	}
 
 	// output tip message
@@ -46,7 +43,10 @@ func isEmpty() bool {
 	return len(input) == 0
 }
 
-func getDispatchType(t dispatchType) bool {
-	dispatch := must(conf.Int("dispatch::type"))
-	return dispatchType(dispatch.(int))&t == t
+func getDispatchType(t dispatchType) dispatchType {
+	dispatch, err := conf.Int("dispatch::type")
+	if err != nil {
+		panic(err)
+	}
+	return dispatchType(dispatch)
 }

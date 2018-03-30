@@ -9,6 +9,7 @@ import (
 func s2mTx(recursion bool) {
 	log.Info("EXEC s2mTx(%t)", recursion)
 	dust := conf.DefaultInt("tx::dust", DefaultDust)
+	iteration := conf.DefaultInt("tx::output_limit", OutputLimit)
 
 	for reference, amount := range input {
 		// avoid to create a coin with low amount than dust
@@ -34,7 +35,6 @@ func s2mTx(recursion bool) {
 			panic("no account in output...")
 		}
 
-		iteration := conf.DefaultInt("output_limit", OutputLimit)
 		if maxSplit < iteration {
 			iteration = maxSplit
 		}
