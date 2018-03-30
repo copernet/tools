@@ -3,19 +3,22 @@ package main
 import (
 	"math"
 	"math/rand"
+	"time"
 
 	"github.com/btcsuite/btcd/wire"
 )
 
 func n2mTx(recursion bool) {
-	log.Info("EXEC m2sTx(%t)", recursion)
+	log.Info("EXEC n2mTx(%t)", recursion)
 
-	inputLimit := conf.DefaultInt("input_limit", InputLimit)
-	iteration := conf.DefaultInt("output_limit", OutputLimit)
+	inputLimit := conf.DefaultInt("tx::input_limit", InputLimit)
+	iteration := conf.DefaultInt("tx::output_limit", OutputLimit)
 
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	// plus 1 to insure the result never be zero
-	realInputs := rand.Intn(inputLimit) + 1
-	refs := make([]ref, realInputs)
+	realInputs := r.Intn(inputLimit) + 1
+	iteration = r.Intn(iteration) + 1
+	refs := make([]ref, inputLimit)
 
 	// construct txin start------------
 	counter := 0
@@ -35,6 +38,7 @@ func n2mTx(recursion bool) {
 		}
 		n2m.TxIn = append(n2m.TxIn, &txin)
 		refs[counter] = reference
+
 		counter++
 		sum += amount
 
@@ -50,22 +54,29 @@ func n2mTx(recursion bool) {
 		}
 
 		splitValue := int(amount*math.Pow10(8))/iteration - fee
-		if splitValue < 0 {
+		if splitValue <= 0 {
 			continue
 		}
 
-		s2m.TxOut = make([]*wire.TxOut, iteration)
 		for i := 0; i < int(iteration); i++ {
 			out := wire.TxOut{
 				Value:    int64(splitValue), // transaction fee
 				PkScript: pkScript,
 			}
-			s2m.TxOut[i] = &out
+			n2m.TxOut = append(n2m.TxOut, &out)
 		}
-		//  no assignment for tx.LockTime(default 0)
+		// no assignment for tx.LockTime(default 0)
 
 		// reset sum
 		sum = 0.0
-		signAndSendTx(m2s, refs, 1, recursion)
+		signAndSendTx(n2m, refs, iteration, recursion)
+
+		// reuse memory space partly
+		n2m.TxIn = n2m.TxIn[:0]
+		n2m.TxOut = n2m.TxOut[:0]
+
+		// plus 1 to insure the result never be zero
+		realInputs = r.Intn(inputLimit) + 1
+		iteration = r.Intn(iteration) + 1
 	}
 }

@@ -6,7 +6,7 @@ const (
 	s2sType dispatchType = 1 << iota
 	s2mType
 	m2sType
-	n2mType  // not to realise at current time
+	n2mType // not to realise at current time
 )
 
 func dispatch() {
@@ -31,6 +31,10 @@ func dispatch() {
 
 	if getDispatchType(s2sType) && !isEmpty() {
 		s2sTx(recursionConf)
+	}
+
+	if getDispatchType(n2mType) && !isEmpty() {
+		n2mTx(recursionConf)
 	}
 
 	// output tip message

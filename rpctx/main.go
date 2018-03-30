@@ -95,8 +95,8 @@ func init() {
 	m2s.TxOut = make([]*wire.TxOut, 1)
 
 	n2m = wire.NewMsgTx(1)
-	n2m.TxIn = make([]*wire.TxIn, 1)
-	n2m.TxOut = make([]*wire.TxOut, 1)
+	n2m.TxIn = make([]*wire.TxIn, 0)
+	n2m.TxOut = make([]*wire.TxOut, 0)
 
 	fmt.Println("app init complete!")
 }
