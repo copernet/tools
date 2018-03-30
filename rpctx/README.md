@@ -7,25 +7,39 @@ This repository is under experiment. The current problem is that kafka is not su
 - Ubuntu 16.04.3 LTS
 - Bitcoin-ABC v0.16.2
 
-### Modified Source Code:
+### Run bitcoind client:
 
 ```
-# consensus.h
-static const uint64_t DEFAULT_MAX_BLOCK_SIZE = 32 * ONE_MEGABYTE;
-static const int64_t MAX_BLOCK_SIGOPS_PER_MB = 2000000;
-static const int COINBASE_MATURITY = 1;  // optional
+cd path/to/bitcoin-abc/src
+./bitcoind -testnet -relaypriority=false -blockmaxsize=16000000
 
-# policy.h
-static const uint64_t DEFAULT_MAX_GENERATED_BLOCK_SIZE = 32 * ONE_MEGABYTE;
-static const uint64_t DEFAULT_BLOCK_PRIORITY_PERCENTAGE = 0;
-static const Amount DEFAULT_BLOCK_MIN_TX_FEE(0);
-static const Amount DEFAULT_INCREMENTAL_RELAY_FEE(0);
-static const Amount DUST_RELAY_TX_FEE(0);
+# create more transactions without txfee
+# optional
+bitcoin-cli settxfee 0
 ```
 
-> startup command: ./bitcoind -testnet -relaypriority=false
+### Usage:
 
-> bitcoin-cli settxfee 0    // after finishing startup
+1. edit conf/app.conf to be available
+2. configure dispatch type in conf/app.conf named dispatch item
+
+	- s2mTx: create a large of transaction(recommanded in first running)
+	- m2sTx: aggregate less conin(recommanded in heavy listunspent load)
+	- n2mTx: create more natural transactions with n inputs and m outputs randomly
+	- s2sTx: aim to create transations recursively when there are abundantly spendable output
+
+3. run
+
+	```
+	# compile in Linux
+	go build -o rpc
+	./rpc
+	
+	# compile in other platform, run in Linux
+	CGO_ENABLE=0 GOOS=linux GOARCH=amd64 go build -o rpc
+	scp ./rpc user@ip:/path/to/this reporisity
+	./rpc
+	```
 
 ### Result:
 
