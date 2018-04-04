@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/astaxie/beego/config"
 	"github.com/astaxie/beego/logs"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
@@ -30,7 +28,6 @@ const (
 
 // global variables
 var (
-	log  *logs.BeeLogger
 	conf config.Configer
 
 	// store available input and output
@@ -59,7 +56,7 @@ type ref struct {
 type coin map[ref]float64
 
 func init() {
-	fmt.Println("app init start...")
+	logs.Info("app init start...")
 	// configuration setting
 	var err error
 	conf, err = config.NewConfig("ini", "conf/app.conf")
@@ -67,9 +64,8 @@ func init() {
 		panic(err)
 	}
 
-	log = logs.NewLogger()
 	// log setting
-	log.SetLogger("console")
+	logs.SetLogger("console")
 	// log.SetLogger(logs.AdapterFile, `{"filename":"log/btcrpc.log"}`)
 	// if must(conf.Bool("log::async")).(bool) {
 	// 	log.Async(1e3)
@@ -100,7 +96,7 @@ func init() {
 		n2m.TxOut = make([]*wire.TxOut, 0)
 	}
 
-	fmt.Println("app init complete!")
+	logs.Info("app init complete!")
 }
 
 func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
@@ -108,7 +104,7 @@ func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 	// or get null and a err reason
 	signedTx, _, err := client.SignRawTransaction(msg)
 	if err != nil {
-		log.Error(err.Error())
+		logs.Error(err.Error())
 	}
 
 	// todo sign tx in app no to bother client rpc(optimize)
@@ -131,7 +127,7 @@ func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 	// remove transactions that have been consumed whether success or not
 	removeInputRecursion(refs)
 	if err != nil {
-		log.Error(err.Error())
+		logs.Error(err.Error())
 	} else {
 		// recursion tx
 		if recursion {
@@ -143,7 +139,7 @@ func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 			}
 		}
 		count++
-		log.Info("Create a transaction success, NO.%d, txhash: %s", count, txhash.String())
+		logs.Info("Create a transaction success, NO.%d, txhash: %s", count, txhash.String())
 	}
 }
 

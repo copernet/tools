@@ -1,16 +1,18 @@
 package main
 
 import (
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcd/rpcclient"
 	"encoding/hex"
 	"math"
+
+	"github.com/astaxie/beego/logs"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
+	"github.com/btcsuite/btcd/rpcclient"
 )
 
 // inputs() function will stop this program via panic exception
 // because origin spendable tx will be empty if any error occur.
 func inputs(client *rpcclient.Client) {
-	log.Info("starting acquire data...")
+	logs.Info("starting acquire data...")
 
 	dust, err := conf.Int("tx::dust")
 	if err != nil {
@@ -61,10 +63,10 @@ func inputs(client *rpcclient.Client) {
 				panic(err)
 			}
 			output[item.Address] = scriptPubKey
-		} else if item.Amount > limitCoinConvert{
+		} else if item.Amount > limitCoinConvert {
 			lessCoin++
 			input[r] = item.Amount
 		}
 	}
-	log.Info("input: %d, output: %d, lessCoin: %d", len(input), len(output), lessCoin)
+	logs.Info("input: %d, output: %d, lessCoin: %d", len(input), len(output), lessCoin)
 }

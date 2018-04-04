@@ -5,11 +5,12 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/btcsuite/btcd/wire"
 )
 
 func n2mTx(recursion bool) {
-	log.Info("EXEC n2mTx(%t)", recursion)
+	logs.Info("EXEC n2mTx(%t)", recursion)
 
 	inputLimit := conf.DefaultInt("tx::input_limit", InputLimit)
 	iteration := conf.DefaultInt("tx::output_limit", OutputLimit)

@@ -3,11 +3,12 @@ package main
 import (
 	"math"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/btcsuite/btcd/wire"
 )
 
 func s2sTx(recursion bool) {
-	log.Info("EXEC s2sTx(%t)", recursion)
+	logs.Info("EXEC s2sTx(%t)", recursion)
 
 	for reference, amount := range input {
 		give := int(amount*math.Pow10(8)) - fee

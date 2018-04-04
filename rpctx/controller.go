@@ -1,5 +1,7 @@
 package main
 
+import "github.com/astaxie/beego/logs"
+
 type dispatchType int
 
 const (
@@ -15,7 +17,7 @@ func dispatch() {
 
 	spendableCount := len(input)
 	if spendableCount == 0 {
-		log.Error("There is no spendable transaction.")
+		logs.Error("There is no spendable transaction.")
 	}
 
 	// whether to create transaction recursively
@@ -35,7 +37,7 @@ func dispatch() {
 	}
 
 	// output tip message
-	log.Info("Create Transactions Complete!\n")
+	logs.Info("Create Transactions Complete!\n")
 }
 
 func isEmpty() bool {
