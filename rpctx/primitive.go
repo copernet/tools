@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/astaxie/beego/config"
 	"github.com/astaxie/beego/logs"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
@@ -23,7 +25,8 @@ const (
 	LessCoinLimit           = 5000
 	DefaultRecursion        = true
 
-	DefaultInterval = 600
+	DefaultInterval = 600	// second
+	DefaultTxInterval = 100 // millisecond
 )
 
 // global variables
@@ -39,8 +42,10 @@ var (
 	// successful transaction
 	count = 0
 
-	// create transactions interval
+	// rpc listunspent interval
 	interval = 0
+	// send transaction interval
+	txinterval = 0
 
 	s2s *wire.MsgTx
 	s2m *wire.MsgTx
@@ -74,6 +79,7 @@ func init() {
 	// get transaction fee from configuration
 	fee = conf.DefaultInt("tx::fee", DefaultFee)
 	interval = conf.DefaultInt("dispatch::interval", DefaultInterval)
+	txinterval = conf.DefaultInt("dispatch::txinterval", DefaultTxInterval)
 
 	client = Client()
 
@@ -102,6 +108,7 @@ func init() {
 func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 	// rpc requests signing a raw transaction and gets returned signed transaction,
 	// or get null and a err reason
+	time.Sleep(time.Duration(txinterval) * time.Millisecond)
 	signedTx, _, err := client.SignRawTransaction(msg)
 	if err != nil {
 		logs.Error(err.Error())
