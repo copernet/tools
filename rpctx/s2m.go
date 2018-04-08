@@ -14,6 +14,9 @@ func s2mTx(recursion bool) {
 
 	for reference, amount := range input {
 		// avoid to create a coin with low amount than dust
+		// side effect: make coin more nearly amount at the same time
+		// todo notice: The number of its tx_out may be not the specified output_limit
+		// because of maxSplit judgement
 		var maxSplit int
 		if dust != 0 {
 			maxSplit = int(amount*math.Pow10(8)) / dust

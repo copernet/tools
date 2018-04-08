@@ -2,7 +2,6 @@ package main
 
 import (
 	"math"
-	"math/rand"
 
 	"github.com/astaxie/beego/logs"
 	"github.com/btcsuite/btcd/wire"
@@ -13,20 +12,12 @@ func m2sTx(recursion bool) {
 
 	inputLimit := conf.DefaultInt("tx::input_limit", InputLimit)
 
-	// plus 1 to insure the result never be zero
-	realInputs := rand.Intn(inputLimit) + 1
-	refs := make([]ref, realInputs)
+	refs := make([]ref, inputLimit)
 	counter := 0
 	sum := 0.0
-	lessCoinValue := conf.DefaultInt("exec::less_coin_limit", LessCoinLimit)
 	for reference, amount := range input {
-		// aggregate many less coins in one other than abundant coin item
-		if amount*math.Pow10(8) < float64(lessCoinValue) {
-			continue
-		}
-
 		// not enough input items
-		if len(input) < realInputs {
+		if len(input) < inputLimit {
 			break
 		}
 
@@ -42,12 +33,12 @@ func m2sTx(recursion bool) {
 		counter++
 		sum += amount
 
-		if counter < realInputs {
+		if counter < inputLimit {
 			continue
 		}
 		counter = 0
 
-		give := int(sum*math.Pow10(8)) - realInputs*fee
+		give := int(sum*math.Pow10(8)) - inputLimit*fee
 		if give < 0 {
 			continue
 		}
