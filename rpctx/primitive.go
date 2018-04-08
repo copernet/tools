@@ -13,7 +13,8 @@ import (
 )
 
 const (
-	DefaultDust = 1000
+	DefaultDust      = 1000
+	DefaultLimitCoin = 10
 
 	InputLimit  = 50
 	OutputLimit = 50
@@ -25,7 +26,7 @@ const (
 	LessCoinLimit           = 5000
 	DefaultRecursion        = true
 
-	DefaultInterval = 600	// second
+	DefaultInterval   = 600 // second
 	DefaultTxInterval = 100 // millisecond
 )
 

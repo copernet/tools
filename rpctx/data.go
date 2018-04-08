@@ -14,15 +14,8 @@ import (
 func inputs(client *rpcclient.Client) {
 	logs.Info("starting acquire data...")
 
-	dust, err := conf.Int("tx::dust")
-	if err != nil {
-		dust = DefaultDust
-	}
-
-	limitCoin, err := conf.Int("tx::limit_coin")
-	if err != nil {
-		dust = DefaultDust
-	}
+	dust := conf.DefaultInt("tx::dust", DefaultDust)
+	limitCoin := conf.DefaultInt("tx::limit_coin", DefaultLimitCoin)
 
 	// rpc requests to get unspent coin list
 	lu, err := client.ListUnspent()
@@ -52,8 +45,8 @@ func inputs(client *rpcclient.Client) {
 
 		// convert Satoshi to BCH
 		dustConvert := float64(dust) * math.Pow10(-8.0)
-
 		limitCoinConvert := float64(limitCoin) * math.Pow10(-8.0)
+
 		if item.Amount > dustConvert {
 
 			input[r] = item.Amount
