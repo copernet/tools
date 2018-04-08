@@ -25,6 +25,7 @@ const (
 	AbundantTransactions    = 60000
 	LessCoinLimit           = 5000
 	DefaultRecursion        = true
+	DefaultAllInOne         = true
 
 	DefaultInterval   = 600 // second
 	DefaultTxInterval = 100 // millisecond
@@ -121,11 +122,11 @@ func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 	// rawPriv, _ := hex.DecodeString("**************")
 	// prikey,_ := btcec.PrivKeyFromBytes(btcec.S256(), rawPriv)
 	// for idx, _ := range msg.TxIn{
-	//	b, err := txscript.SignatureScript(msg,idx,msg.TxOut[0].PkScript,65503,prikey,true)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	msg.TxIn[idx].SignatureScript = b
+	// 	b, err := txscript.SignatureScript(msg,idx,msg.TxOut[0].PkScript,65503,prikey,true)
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// 	msg.TxIn[idx].SignatureScript = b
 	// }
 
 	// rpc request send a signed transaction, it will return a error if there are any

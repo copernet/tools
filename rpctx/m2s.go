@@ -11,6 +11,7 @@ func m2sTx(recursion bool) {
 	logs.Info("EXEC m2sTx(%t)", recursion)
 
 	inputLimit := conf.DefaultInt("tx::input_limit", InputLimit)
+	allInOne := conf.DefaultBool("exec::all_in_one", DefaultAllInOne)
 
 	refs := make([]ref, inputLimit)
 	counter := 0
@@ -18,7 +19,12 @@ func m2sTx(recursion bool) {
 	for reference, amount := range input {
 		// not enough input items
 		if len(input) < inputLimit {
-			break
+			// all available input will become one item
+			if allInOne {
+				inputLimit = len(input)
+			} else {
+				break
+			}
 		}
 
 		txin := wire.TxIn{
@@ -55,6 +61,7 @@ func m2sTx(recursion bool) {
 
 		// reset sum
 		sum = 0.0
+		m2s.TxIn = m2s.TxIn[:inputLimit]
 		signAndSendTx(m2s, refs, 1, recursion)
 	}
 }
