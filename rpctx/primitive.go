@@ -147,6 +147,7 @@ func signAndSendTx(msg *wire.MsgTx, refs []ref, outs int, recursion bool) {
 				input[reference] = float64(msg.TxOut[i].Value) * 1e-8
 			}
 		}
+
 		count++
 		logs.Info("Create a transaction success, NO.%d, txhash: %s", count, txhash.String())
 	}

@@ -39,17 +39,18 @@ func s2mTx(recursion bool) {
 			panic("no account in output...")
 		}
 
-		if maxSplit < iteration {
-			iteration = maxSplit
+		bak := iteration
+		if maxSplit < bak {
+			bak = maxSplit
 		}
 
-		splitValue := int(amount*math.Pow10(8))/iteration - fee
+		splitValue := int(amount*math.Pow10(8))/bak - fee
 		if splitValue < 0 {
 			continue
 		}
 
-		s2m.TxOut = make([]*wire.TxOut, iteration)
-		for i := 0; i < int(iteration); i++ {
+		s2m.TxOut = make([]*wire.TxOut, bak)
+		for i := 0; i < int(bak); i++ {
 			out := wire.TxOut{
 				Value:    int64(splitValue), // transaction fee
 				PkScript: pkScript,
@@ -58,6 +59,6 @@ func s2mTx(recursion bool) {
 		}
 		//  no assignment for tx.LockTime(default 0)
 
-		signAndSendTx(s2m, []ref{reference}, int(iteration), recursion)
+		signAndSendTx(s2m, []ref{reference}, int(bak), recursion)
 	}
 }
