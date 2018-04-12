@@ -24,7 +24,7 @@ func dispatch() {
 	recursionConf := conf.DefaultBool("recursion", DefaultRecursion)
 
 	if !isEmpty() {
-		switch t := getDispatchType(m2sType); t {
+		switch t := getDispatchType(); t {
 		case m2sType:
 			m2sTx(recursionConf)
 		case s2mType:
@@ -45,7 +45,7 @@ func isEmpty() bool {
 	return len(input) == 0
 }
 
-func getDispatchType(t dispatchType) dispatchType {
+func getDispatchType() dispatchType {
 	dispatch, err := conf.Int("dispatch::type")
 	if err != nil {
 		panic(err)

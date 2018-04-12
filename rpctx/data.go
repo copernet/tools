@@ -56,7 +56,10 @@ func inputs(client *rpcclient.Client) {
 			output[item.Address] = scriptPubKey
 		} else {
 			lessCoin++
-			input[r] = item.Amount
+			if getDispatchType() == m2sType {
+				// add the ref transaction only in m2sType
+				input[r] = item.Amount
+			}
 		}
 	}
 	logs.Info("input: %d, output: %d, lessCoin: %d", len(input), len(output), lessCoin)
