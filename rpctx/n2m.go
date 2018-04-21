@@ -12,21 +12,28 @@ import (
 func n2mTx(recursion bool) {
 	logs.Info("EXEC n2mTx(%t)", recursion)
 
-	inputLimit := conf.DefaultInt("tx::input_limit", InputLimit)
-	iteration := conf.DefaultInt("tx::output_limit", OutputLimit)
+	originInputLimit := conf.DefaultInt("tx::input_limit", InputLimit)
+	originIteration := conf.DefaultInt("tx::output_limit", OutputLimit)
 
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	// plus 1 to insure the result never be zero
-	realInputs := r.Intn(inputLimit) + 1
-	iteration = r.Intn(iteration) + 1
-	refs := make([]ref, inputLimit)
+	refs := make([]ref, 0, originInputLimit)
 
 	// construct txin start------------
 	counter := 0
 	sum := 0.0
 	for reference, amount := range input {
+		r := rand.New(rand.NewSource(time.Now().UnixNano()))
+		inputLimit := r.Intn(originInputLimit)
+		iteration := r.Intn(originIteration)
+
+		if inputLimit == 0 {
+			inputLimit = 1
+		}
+		if iteration == 0 {
+			iteration = 1
+		}
+
 		// not enough input items
-		if len(input) < realInputs {
+		if len(input) < inputLimit {
 			break
 		}
 
@@ -38,12 +45,12 @@ func n2mTx(recursion bool) {
 			Sequence: 0xffffff,
 		}
 		n2m.TxIn = append(n2m.TxIn, &txin)
-		refs[counter] = reference
+		refs = append(refs, reference)
 
 		counter++
 		sum += amount
 
-		if counter < realInputs {
+		if counter < inputLimit {
 			continue
 		}
 		counter = 0
@@ -56,6 +63,7 @@ func n2mTx(recursion bool) {
 
 		splitValue := int(amount*math.Pow10(8))/iteration - fee
 		if splitValue <= 0 {
+			n2m.TxIn = n2m.TxIn[:0] // clean TxIn element
 			continue
 		}
 
@@ -75,9 +83,6 @@ func n2mTx(recursion bool) {
 		// reuse memory space partly
 		n2m.TxIn = n2m.TxIn[:0]
 		n2m.TxOut = n2m.TxOut[:0]
-
-		// plus 1 to insure the result never be zero
-		realInputs = r.Intn(inputLimit) + 1
-		iteration = r.Intn(iteration) + 1
+		refs = refs[:0]
 	}
 }
