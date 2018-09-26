@@ -4,7 +4,7 @@ baddr is a convenient tool for generating bitcoin address according to the speci
 
 Installation:
 ```Go
-go get github.com/qshuai/Tools/baddr
+go get github.com/copernet/tools/baddr
 ```
 
 Usage:
