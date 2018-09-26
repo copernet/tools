@@ -6,7 +6,7 @@ btalk make you say any words what you want to say on blockchain. Awesome!!!
 ### Installation:
 
 ```
-go get github.com/qshuai/btalk
+go get github.com/copernet/tools/btalk
 ```
 
 ### Usage:
