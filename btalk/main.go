@@ -22,8 +22,8 @@ const (
 
 	privkey = "cRL6HJZYSF1JMUSyP6PsKMRD9PhCS1acUSoKWh9p5Bf5iY4SPq5j"
 
-	// 10 satoshi/byte
-	feeRate = 10
+	// 1 satoshi/byte default
+	feeRate = 1
 
 	defaultSignatureSize = 107
 
