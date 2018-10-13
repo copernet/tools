@@ -146,7 +146,7 @@ func assembleTx(utxo string, msgBytes []byte, pkScript []byte, wif *cashutil.WIF
 		}
 		tx.TxIn = append(tx.TxIn, &txIn)
 
-		actualFeeRate := value / float64(tx.SerializeSize()+defaultSignatureSize*(i+1))
+		actualFeeRate := inputValue / float64(tx.SerializeSize()+defaultSignatureSize*(i+1))
 		if actualFeeRate < feeRate {
 			continue
 		}
