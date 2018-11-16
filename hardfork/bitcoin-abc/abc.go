@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"flag"
 	"fmt"
 	"math/rand"
@@ -18,7 +19,6 @@ import (
 	"github.com/bcext/gcash/rpcclient"
 	"github.com/bcext/gcash/txscript"
 	"github.com/bcext/gcash/wire"
-	"github.com/pkg/errors"
 	"github.com/qshuai/tcolor"
 	"github.com/shopspring/decimal"
 )
