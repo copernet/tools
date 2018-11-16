@@ -17,7 +17,6 @@ import (
 	"github.com/bcext/gcash/rpcclient"
 	"github.com/bcext/gcash/txscript"
 	"github.com/bcext/gcash/wire"
-	"github.com/copernet/copernicus/model/opcodes"
 	"github.com/qshuai/tcolor"
 	"github.com/shopspring/decimal"
 )
@@ -242,7 +241,7 @@ func spendAssembleTx(u utxo, wif *cashutil.WIF) (*wire.MsgTx, error) {
 func spendSign(tx *wire.MsgTx, inputValueSlice []int64, pkScript []byte, wif *cashutil.WIF) (*wire.MsgTx, error) {
 	for idx, _ := range tx.TxIn {
 		script, err := txscript.NewScriptBuilder().AddOp(txscript.OP_1).AddOp(txscript.OP_3).AddOp(txscript.OP_MUL).
-			AddOp(opcodes.OP_NUMEQUAL).Script()
+			AddOp(txscript.OP_NUMEQUAL).Script()
 		if err != nil {
 			return nil, err
 		}
