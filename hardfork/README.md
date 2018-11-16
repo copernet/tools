@@ -1,6 +1,6 @@
 hardfork
 ---
-这个仓库的目的是为了在区块的中位数时间戳大于等于`1542300000`时，有效分离bitcoin-abc和bitcoin-sv两条链。
+这个仓库的目的是为了在区块的中位数时间戳大于等于`1542300000`时，有效分离bitcoin-abc和bitcoin-sv两条链。实现的策略是：在bitcoin-abc链中注入含bitcoin-abc的特有的操作码`OP_CHECKDATASIG`的交易，并且在bitcoin-sv链上注入含有bitcoin-sv的特有操作吗`OP_MUL`，这样可以在bicoin-abc和bitcoin-sv节点各打包出一个含有独有共识的交易，而链认为对方的区块不符合自己的共识规则，从而达到分离bitcoin-abc和bitcoin-sv区块链的目的。
 
 #### 提醒:
 
