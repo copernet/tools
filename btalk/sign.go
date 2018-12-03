@@ -22,7 +22,7 @@ func sign(tx *wire.MsgTx, inputValueSlice []int64, pkScript []byte, wif *cashuti
 			return nil, err
 		}
 		sig = append(sig, pk...)
-		tx.TxIn[0].SignatureScript = sig
+		tx.TxIn[idx].SignatureScript = sig
 
 		engine, err := txscript.NewEngine(pkScript, tx, idx, txscript.StandardVerifyFlags,
 			nil, nil, inputValueSlice[idx])
