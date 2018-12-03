@@ -335,7 +335,7 @@ func GetRPC(host, user, passwd string) *rpcclient.Client {
 func init() {
 	privKey := flag.String("privkey", "", "private key of the sender")
 	feerate := flag.String("feerate", "0.00001", "the specified feerate for bitcoin cash network")
-	second := flag.Int("wait", 60, "the interval for creating transaction")
+	second := flag.Int("wait", 600, "the interval for creating transaction")
 
 	host := flag.String("rpchost", "127.0.0.1:8332", "Please input rpc host(ip:port)")
 	user := flag.String("rpcuser", "", "Please input your rpc username")
